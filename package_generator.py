@@ -1,4 +1,4 @@
-import sublime, sublime_plugin, re
+import sublime, sublime_plugin
 
 class PackageGeneratorCommand(sublime_plugin.WindowCommand):
     def run(self):
