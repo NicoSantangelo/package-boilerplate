@@ -10,16 +10,17 @@ else:
 # TODO:
 # Figure out the best way to generate the inheritance from sublime_plugin on the fly.
 #   For example => class ExampleCommand( BaseCommand.create(sublime_plugin.TextCommand) ):
-# Replace the package specific ('example') values with a class property
 
 # A base for each command
 class BaseCommand(sublime_plugin.TextCommand):
+    package_name = "Example"
+
     def run(self, edit):
         self.setup_data_from_settings()
         self.work()
 
     def setup_data_from_settings(self):
-        self.settings = sublime.load_settings("Example.sublime-settings")
+        self.settings = sublime.load_settings(self.package_name + ".sublime-settings")
 
     # Main method, override
     def work(self):
@@ -27,7 +28,7 @@ class BaseCommand(sublime_plugin.TextCommand):
 
     # Panels and message
     def display_message(self, text):
-        sublime.active_window().active_view().set_status("example", text)
+        sublime.active_window().active_view().set_status(self.package_name, text)
 
     def show_quick_panel(self, items, on_done = None):
         self.defer_sync(lambda: self.window.show_quick_panel(items, on_done, sublime.MONOSPACE_FONT))
@@ -37,14 +38,15 @@ class BaseCommand(sublime_plugin.TextCommand):
 
     # Output view
     def show_output_panel(self, text):
+        output_panel_name = self.package_name.lower() + "_output"
         self.scroll_to_end = True
-        self.output_view = self.window.get_output_panel("example_output")
-        self.window.run_command("show_panel", { "panel": "output.example_output" })
+        self.output_view = self.window.get_output_panel(output_panel_name)
+        self.window.run_command("show_panel", { "panel": "output." + output_panel_name })
         self.append_to_output_view(text)
 
     def ouput_in_new_tab(self, text):
         self.scroll_to_end = False
-        self.output_view = self.window.open_file("Example Results")
+        self.output_view = self.window.open_file(self.package_name + " Results")
         self.append_to_output_view(text)
 
     def append_to_output_view(self, text):
@@ -66,7 +68,7 @@ class BaseCommand(sublime_plugin.TextCommand):
         
     def async(self, fn, delay):
         if is_sublime_text_3:
-            progress = ProgressNotifier('Example: Working')
+            progress = ProgressNotifier(self.package_name + ': Working')
             sublime.set_timeout_async(lambda: self.call(fn, progress), delay)
         else:
             fn()
