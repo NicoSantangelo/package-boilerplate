@@ -1,6 +1,6 @@
 import sublime, sublime_plugin
 
-class PackageGeneratorCommand(sublime_plugin.WindowCommand):
+class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
     def run(self):
         # TODO:
         # Ask for user options (or hardcode them in settings), like "Want to use a progress bar?"
