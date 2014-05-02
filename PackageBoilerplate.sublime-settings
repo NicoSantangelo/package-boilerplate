@@ -1,3 +1,4 @@
 {
-    
+    // Customize the location of the package files
+    "packages_path": ""
 }
