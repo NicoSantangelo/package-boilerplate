@@ -1,6 +1,6 @@
 [
     {
-      "caption": "",
-      "command": ""
+      "caption": "Package Boilerplate: New package",
+      "command": "package_boilerplate"
     }
 ]
