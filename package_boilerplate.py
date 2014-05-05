@@ -1,6 +1,13 @@
 import sublime, sublime_plugin
 import os
 
+import sys, glob
+from imp import reload
+
+# Reload tests
+for test_file in glob.glob("tests/*.py"):
+    reload(sys.modules["PackageBoilerplate." + test_file[:-3].replace("/", ".")])
+
 class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
     def run(self):
         # TODO:
