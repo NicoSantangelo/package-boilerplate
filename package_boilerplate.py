@@ -1,5 +1,8 @@
 import sublime, sublime_plugin
+import re
 import os
+import codecs
+import shutil
 
 import sys, glob
 from imp import reload
@@ -23,14 +26,39 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
             return
 
         package_destination = os.path.join(self.packages_path(), package_name)
-        self.ensure_directory(package_destination)
 
     def packages_path(self):
         return self.settings.get("packages_path", False) or sublime.packages_path()
+
+    def show_input_panel(self, caption, on_done = None, on_change = None, on_cancel = None):
+        sublime.active_window().show_input_panel(caption, "", on_done, on_change, on_cancel)
+
+class PackageSkeleton():
+    def __init__(self, skeleton_folder_path):
+        self.skeleton_folder_path = skeleton_folder_path
+
+    def compose(self, package_name, destination):
+        package_destination = os.path.join(destination, package_name)
+        self.ensure_directory(package_destination)
+        self.copy_files(package_destination, package_name)
+
+    def copy_files(self, destination, package_name):
+        for file_path in os.listdir(self.skeleton_folder_path):
+            skeleton_file = os.path.join(self.skeleton_folder_path, file_path)
+            new_file = os.path.join(destination, self.replace_file_name(file_path, package_name))
+            shutil.copy(skeleton_file, new_file)
+
+    def replace_file_name(self, file_name, package_name):
+        return file_name.replace("PackageName", package_name).replace("package_name", self.to_underscore(package_name))
+
+    def replace_contents(self, file_path, package_name):
+        with codecs.open(file_path, 'r', "utf-8") as opened_file:
+            return opened_file.read().format(package_name = package_name)
 
     def ensure_directory(self, path):
         if not os.path.exists(path):
             os.makedirs(path)
 
-    def show_input_panel(self, caption, on_done = None, on_change = None, on_cancel = None):
-        sublime.active_window().show_input_panel(caption, "", on_done, on_change, on_cancel)
+    def to_underscore(self, name):
+        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
