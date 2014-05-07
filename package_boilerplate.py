@@ -47,13 +47,25 @@ class PackageSkeleton():
             skeleton_file = os.path.join(self.skeleton_folder_path, file_path)
             new_file = os.path.join(destination, self.replace_file_name(file_path, package_name))
             shutil.copy(skeleton_file, new_file)
+            self.replace_contents(new_file, package_name)
 
     def replace_file_name(self, file_name, package_name):
         return file_name.replace("PackageName", package_name).replace("package_name", self.to_underscore(package_name))
 
     def replace_contents(self, file_path, package_name):
-        with codecs.open(file_path, 'r', "utf-8") as opened_file:
-            return opened_file.read().format(package_name = package_name)
+        with codecs.open(file_path, 'r+', "utf-8") as opened_file:
+            file_content = opened_file.read()
+            try:
+                new_content = file_content.format(package_name = package_name)
+            except KeyError:
+                new_content = file_content
+
+            self.write_text(opened_file, new_content)
+
+    def write_text(self, file_to_write, text):
+        file_to_write.seek(0)
+        file_to_write.write(text)
+        file_to_write.truncate()
 
     def ensure_directory(self, path):
         if not os.path.exists(path):

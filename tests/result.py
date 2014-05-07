@@ -8,7 +8,7 @@ else:
     from progress_notifier import ProgressNotifier
 
 class BaseCommand(sublime_plugin.TextCommand):
-    package_name = "{package_name}"
+    package_name = "SuperPackage"
 
     def run(self, edit):
         self.setup_data_from_settings()
