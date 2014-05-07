@@ -8,7 +8,7 @@ import sys, glob
 from imp import reload
 
 # Reload tests
-for test_file in glob.glob("tests/*.py"):
+for test_file in glob.glob("tests/test_*.py"):
     reload(sys.modules["PackageBoilerplate." + test_file[:-3].replace("/", ".")])
 
 class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
