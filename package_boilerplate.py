@@ -2,6 +2,7 @@ import sublime, sublime_plugin
 import re
 import os
 import codecs
+import fnmatch
 import shutil
 
 import sys, glob
@@ -34,8 +35,9 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
         sublime.active_window().show_input_panel(caption, "", on_done, on_change, on_cancel)
 
 class PackageSkeleton():
-    def __init__(self, skeleton_folder_path):
+    def __init__(self, skeleton_folder_path, skip = []):
         self.skeleton_folder_path = skeleton_folder_path
+        self.skip = skip
 
     def compose(self, package_name, destination):
         package_destination = os.path.join(destination, package_name)
@@ -45,9 +47,17 @@ class PackageSkeleton():
     def copy_files(self, destination, package_name):
         for file_path in os.listdir(self.skeleton_folder_path):
             skeleton_file = os.path.join(self.skeleton_folder_path, file_path)
-            new_file = os.path.join(destination, self.replace_file_name(file_path, package_name))
-            shutil.copy(skeleton_file, new_file)
-            self.replace_contents(new_file, package_name)
+            new_file_name = self.replace_file_name(file_path, package_name)
+            new_file = os.path.join(destination, new_file_name)
+            if not self.should_skip(new_file_name):
+                shutil.copy(skeleton_file, new_file)
+                self.replace_contents(new_file, package_name)
+
+    def should_skip(self, file_name):
+        for skip_wildcard in self.skip:
+            if fnmatch.fnmatch(file_name, skip_wildcard):
+                return True
+        return False
 
     def replace_file_name(self, file_name, package_name):
         return file_name.replace("PackageName", package_name).replace("package_name", self.to_underscore(package_name))
