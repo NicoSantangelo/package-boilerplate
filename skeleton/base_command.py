@@ -13,7 +13,7 @@ else:
 
 # A base for each command
 class BaseCommand(sublime_plugin.TextCommand):
-    package_name = "Example"
+    package_name = "{package_name}"
 
     def run(self, edit):
         self.setup_data_from_settings()

@@ -1,1 +1,1 @@
-# Example
+# {package_name}

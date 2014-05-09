@@ -3,7 +3,6 @@ import codecs
 import os
 import shutil
 
-
 from PackageBoilerplate import package_boilerplate
 
 def file_count(path):
