@@ -18,33 +18,32 @@ class Test_PackageSkeleton(unittest.TestCase):
         self.package_name = "SuperPackage"
         self.full_path = os.path.join(self.directory_path, self.package_name)
         self.skeleton_folder_path = os.path.join(self.directory_path, "skeleton")
-        self.package_skeleton = package_boilerplate.PackageSkeleton(self.skeleton_folder_path)
+        self.package_skeleton = package_boilerplate.PackageSkeleton(self.package_name)
 
     def test_compose_creates_the_package_folder_in_the_desired_destination_with_the_files(self):
         self.assertFalse(os.path.exists(self.full_path))
+        self.package_skeleton.compose(self.skeleton_folder_path, self.directory_path)
 
-        self.package_skeleton.compose(self.package_name, self.directory_path)
-        
         self.assertTrue(os.path.exists(self.full_path))
         self.assertEqual(file_count(self.skeleton_folder_path), file_count(self.full_path))
 
     def test_compose_imports_all_the_folders_recursively(self):
         folder_in_skeleton_path = os.path.join(self.skeleton_folder_path, "folder")
         folder_in_result_path = os.path.join(self.full_path, "folder")
-        self.package_skeleton.compose(self.package_name, self.directory_path)
+        self.package_skeleton.compose(self.skeleton_folder_path, self.directory_path)
         self.assertEqual(file_count(folder_in_skeleton_path), file_count(folder_in_result_path))
 
     def test_compose_replaces_the_package_name_on_each_file_name_found_on_the_skeleton_folder(self):
-        self.package_skeleton.compose(self.package_name, self.directory_path)
+        self.package_skeleton.compose(self.skeleton_folder_path, self.directory_path)
         self.assertEqual(sorted(['folder', 'super_package_command.py', 'Default (OSX).sublime-keymap', 'Default (Linux).sublime-keymap', 'SuperPackage.sublime-settings']), sorted(os.listdir(self.full_path)))
 
     def test_compose_skips_the_files_passed_on_the_constructor_using_file_pattern_matching(self):
-        package_skeleton = package_boilerplate.PackageSkeleton(self.skeleton_folder_path, skip = ['*.sublime-keymap', 'SuperPackage.sublime-settings'])
-        package_skeleton.compose(self.package_name, self.directory_path)
+        package_skeleton = package_boilerplate.PackageSkeleton(self.package_name, skip = ['*.sublime-keymap', 'SuperPackage.sublime-settings'])
+        package_skeleton.compose(self.skeleton_folder_path, self.directory_path)
         self.assertEqual(sorted(['folder', 'super_package_command.py']), sorted(os.listdir(self.full_path)))
 
     def test_compose_replaces_every_appearance_of_project_name_in_the_file(self):
-        self.package_skeleton.compose(self.package_name, self.directory_path)
+        self.package_skeleton.compose(self.skeleton_folder_path, self.directory_path)
         with codecs.open(os.path.join(self.directory_path, "result.py"), 'r', "utf-8") as expected_file:
             expected_result = expected_file.read()
 

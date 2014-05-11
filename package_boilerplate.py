@@ -24,7 +24,7 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
             sublime.active_window().active_view().set_status("PackageBoilerplate", "Please supply a name for your package!") 
             return
 
-        PackageSkeleton("skeleton").compose(package_name, self.packages_path())
+        PackageSkeleton(package_name).compose("skeleton", self.packages_path())
 
     def packages_path(self):
         return self.settings.get("packages_path", False) or sublime.packages_path()
@@ -33,31 +33,31 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
         sublime.active_window().show_input_panel(caption, "", on_done, on_change, on_cancel)
 
 class PackageSkeleton():
-    def __init__(self, skeleton_folder_path, skip = []):
-        self.skeleton_folder_path = skeleton_folder_path
+    def __init__(self, package_name, skip = []):
+        self.package_name = package_name
+        self.underscore_package_name = self.to_underscore(package_name)
         self.skip = skip
 
-    def compose(self, package_name, destination):
-        package_destination = os.path.join(destination, package_name)
+    def compose(self, source, destination):
+        package_destination = os.path.join(destination, self.package_name)
         self.ensure_directory(package_destination)
-        self.copy_files(package_destination, package_name)
+        self.copy_files(source, package_destination)
 
-    def copy_files(self, destination, package_name, folder_to_list = None):
-        folder_to_list = folder_to_list or self.skeleton_folder_path
-        for file_path in os.listdir(folder_to_list):
-            skeleton_file = os.path.join(folder_to_list, file_path)
-            new_file_name = self.replace_file_name(file_path, package_name)
+    def copy_files(self, source, destination):
+        for file_path in os.listdir(source):
+            skeleton_file = os.path.join(source, file_path)
+            new_file_name = self.replace_file_name(file_path)
             if not self.should_skip(new_file_name):
                 new_destination = os.path.join(destination, new_file_name)
                 if os.path.isfile(skeleton_file):
-                    self.copy_file(skeleton_file, new_destination, package_name)
+                    self.copy_file(skeleton_file, new_destination)
                 else:
                     self.ensure_directory(new_destination)
-                    self.copy_files(new_destination, package_name, skeleton_file)
+                    self.copy_files(skeleton_file, new_destination)
 
-    def copy_file(self, source, destination, package_name):
+    def copy_file(self, source, destination):
         shutil.copy(source, destination)
-        self.replace_contents(destination, package_name)
+        self.replace_contents(destination)
 
     def should_skip(self, file_name):
         for skip_wildcard in self.skip:
@@ -65,14 +65,14 @@ class PackageSkeleton():
                 return True
         return False
 
-    def replace_file_name(self, file_name, package_name):
-        return file_name.replace("PackageName", package_name).replace("package_name", self.to_underscore(package_name))
+    def replace_file_name(self, file_name):
+        return file_name.replace("PackageName", self.package_name).replace("package_name", self.underscore_package_name)
 
-    def replace_contents(self, file_path, package_name):
+    def replace_contents(self, file_path):
         with codecs.open(file_path, 'r+', "utf-8") as opened_file:
             file_content = opened_file.read()
             try:
-                new_content = file_content.format(package_name = package_name)
+                new_content = file_content.format(package_name = self.package_name)
             except KeyError:
                 new_content = file_content
 
