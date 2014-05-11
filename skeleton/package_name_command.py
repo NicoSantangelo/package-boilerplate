@@ -7,6 +7,6 @@ if is_sublime_text_3:
 else:
     from base_command import BaseCommand
     
-class ExampleCommand(BaseCommand):
+class {package_name}Command(BaseCommand):
     def work(self):
         pass

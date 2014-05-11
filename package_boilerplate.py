@@ -70,12 +70,7 @@ class PackageSkeleton():
 
     def replace_contents(self, file_path):
         with codecs.open(file_path, 'r+', "utf-8") as opened_file:
-            file_content = opened_file.read()
-            try:
-                new_content = file_content.format(package_name = self.package_name)
-            except KeyError:
-                new_content = file_content
-
+            new_content = opened_file.read().replace("{package_name}", self.package_name)
             self.write_text(opened_file, new_content)
 
     def write_text(self, file_to_write, text):

@@ -7,11 +7,6 @@ if is_sublime_text_3:
 else:
     from progress_notifier import ProgressNotifier
 
-# TODO:
-# Figure out the best way to generate the inheritance from sublime_plugin on the fly.
-#   For example => class ExampleCommand( BaseCommand.create(sublime_plugin.TextCommand) ):
-
-# A base for each command
 class BaseCommand(sublime_plugin.TextCommand):
     package_name = "{package_name}"
 
