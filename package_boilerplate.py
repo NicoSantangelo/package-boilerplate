@@ -42,14 +42,22 @@ class PackageSkeleton():
         self.ensure_directory(package_destination)
         self.copy_files(package_destination, package_name)
 
-    def copy_files(self, destination, package_name):
-        for file_path in os.listdir(self.skeleton_folder_path):
-            skeleton_file = os.path.join(self.skeleton_folder_path, file_path)
+    def copy_files(self, destination, package_name, folder_to_list = None):
+        folder_to_list = folder_to_list or self.skeleton_folder_path
+        for file_path in os.listdir(folder_to_list):
+            skeleton_file = os.path.join(folder_to_list, file_path)
             new_file_name = self.replace_file_name(file_path, package_name)
-            new_file = os.path.join(destination, new_file_name)
             if not self.should_skip(new_file_name):
-                shutil.copy(skeleton_file, new_file)
-                self.replace_contents(new_file, package_name)
+                new_destination = os.path.join(destination, new_file_name)
+                if os.path.isfile(skeleton_file):
+                    self.copy_file(skeleton_file, new_destination, package_name)
+                else:
+                    self.ensure_directory(new_destination)
+                    self.copy_files(new_destination, package_name, skeleton_file)
+
+    def copy_file(self, source, destination, package_name):
+        shutil.copy(source, destination)
+        self.replace_contents(destination, package_name)
 
     def should_skip(self, file_name):
         for skip_wildcard in self.skip:
