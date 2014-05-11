@@ -24,7 +24,7 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
             sublime.active_window().active_view().set_status("PackageBoilerplate", "Please supply a name for your package!") 
             return
 
-        PackageSkeleton("skeleton", skip=["messages"]).compose(package_name, self.packages_path())
+        PackageSkeleton("skeleton").compose(package_name, self.packages_path())
 
     def packages_path(self):
         return self.settings.get("packages_path", False) or sublime.packages_path()
