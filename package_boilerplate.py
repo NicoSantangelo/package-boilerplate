@@ -20,9 +20,9 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
         # Cache the paths so we can throw an error (if there is any) before asking for the package name
         self.skeleton_path = self.get_skeleton_path()
         self.packages_path = self.get_packages_path()
-        self.show_input_panel("Package name", self.name_input_callback)
+        self.show_input_panel("Package name", on_done = self.name_input_callback, on_cancel = self.name_input_callback)
 
-    def name_input_callback(self, package_name):
+    def name_input_callback(self, package_name = None):
         if not package_name:
             sublime.active_window().active_view().set_status("PackageBoilerplate", "Please supply a name for your package!") 
             return
