@@ -62,15 +62,15 @@ class PackageSkeleton():
             new_file_name = self.replace_file_name(file_path)
             if not self.should_skip(new_file_name):
                 new_destination = os.path.join(destination, new_file_name)
-                if os.path.isfile(skeleton_file):
-                    self.copy_file(skeleton_file, new_destination)
-                else:
-                    self.ensure_directory(new_destination)
-                    self.copy_files(skeleton_file, new_destination)
+                self.copy_file(skeleton_file, new_destination)
 
     def copy_file(self, source, destination):
-        shutil.copy(source, destination)
-        self.replace_contents(destination)
+        if os.path.isfile(source):
+            shutil.copy(source, destination)
+            self.replace_contents(destination)
+        else:
+            self.ensure_directory(destination)
+            self.copy_files(source, destination)
 
     def should_skip(self, file_name):
         for skip_wildcard in self.skip:
