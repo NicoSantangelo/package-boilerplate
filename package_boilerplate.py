@@ -17,6 +17,9 @@ for test_file in glob.glob("tests/test_*.py"):
 class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
     def run(self):
         self.settings = sublime.load_settings("PackageBoilerplate.sublime-settings")
+        # Cache the paths so we can throw an error (if there is any) before asking for the package name
+        self.skeleton_path = self.get_skeleton_path()
+        self.packages_path = self.get_packages_path()
         self.show_input_panel("Package name", self.name_input_callback)
 
     def name_input_callback(self, package_name):
@@ -24,10 +27,20 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
             sublime.active_window().active_view().set_status("PackageBoilerplate", "Please supply a name for your package!") 
             return
 
-        PackageSkeleton(package_name).compose("skeleton", self.packages_path())
+        PackageSkeleton(package_name).compose(self.skeleton_path, self.packages_path)
 
-    def packages_path(self):
-        return self.settings.get("packages_path", False) or sublime.packages_path()
+    def get_skeleton_path(self):
+        return self.get_path_from_settings("base_package_structure_path", "skeleton")
+
+    def get_packages_path(self):
+        return self.get_path_from_settings("packages_path", sublime.packages_path())
+
+    def get_path_from_settings(self, settings_key, fallback):
+        path = self.settings.get(settings_key, False) or fallback
+        if not os.path.exists(path):
+            sublime.error_message("PackageBoilerplate\nTried to use the path " + path + " to create the files, but it wasn't found.\nCheck your settings or create an issue on this package repository")
+            raise FileNotFoundError(path)
+        return path
 
     def show_input_panel(self, caption, on_done = None, on_change = None, on_cancel = None):
         sublime.active_window().show_input_panel(caption, "", on_done, on_change, on_cancel)
