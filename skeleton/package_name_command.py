@@ -1,12 +1,11 @@
-import sublime
+import sublime, sublime_plugin
 
-is_sublime_text_3 = int(sublime.version()) >= 3000
+# Base Classes
+# sublime_plugin.TextCommand
+# sublime_plugin.WindowCommand
+# sublime_plugin.EventListener
+# sublime_plugin.ApplicationCommand
 
-if is_sublime_text_3:
-    from .base_command import BaseCommand
-else:
-    from base_command import BaseCommand
-    
-class {package_name}Command(BaseCommand):
-    def work(self):
+class {package_name}Command(sublime_plugin.TextCommand):
+    def run(self, edit = None):
         pass
