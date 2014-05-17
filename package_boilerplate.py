@@ -58,6 +58,7 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
         self.options = [
             { 'name': "BaseCommand: A base class for sublime commands", 'action': self.add_base_command },
             { 'name': "ProgressNotifier: Add a progress bar a la 'Package Control'", 'action': self.add_progress_notifier },
+            { 'name': "What's this?", 'action': self.explain },
             { 'name': "Exit", 'action': lambda : None }
         ]
         self.settings = sublime.load_settings("PackageBoilerplate.sublime-settings")
@@ -76,6 +77,9 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
 
     def add_progress_notifier(self):
         pass
+
+    def explain(self):
+        self.window.open_file(BasePath.join("support/Explanation.txt"))
 
     def show_quick_panel(self, items, on_done = None, on_highlighted = None, selected_index = -1):
         sublime.set_timeout(lambda: sublime.active_window().show_quick_panel(items, on_done, sublime.MONOSPACE_FONT, selected_index, on_highlighted), 0)

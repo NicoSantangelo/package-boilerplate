@@ -1,0 +1,9 @@
+Package Boilerplate
+===================
+
+Hey!
+
+The idea behind the "Add support" command is to aid you in the creation of new packages with some useful classes/code/structure.
+
+When you choose an option, you'll need to write the name of the package you want to add the support to (it will be searched on the packages_path on the settings, or on the default /Packages folder).
+Next, the new files will be placed on your package of choice.
