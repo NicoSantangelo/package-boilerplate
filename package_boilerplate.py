@@ -19,10 +19,13 @@ for test_file in glob.glob("tests/test_*.py"):
 class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
     def run(self):
         self.settings = sublime.load_settings("PackageBoilerplate.sublime-settings")
-        # Cache the paths so we can throw an error (if there is any) before asking for the package name
+        self.cache_paths()
+        self.show_input_panel("Package name", on_done = self.name_input_callback, on_cancel = self.name_input_callback)
+
+    # Cache the paths so we can throw an error (if there is any) before asking for the package name
+    def cache_paths(self):
         self.skeleton_path = self.get_skeleton_path()
         self.packages_path = self.get_packages_path()
-        self.show_input_panel("Package name", on_done = self.name_input_callback, on_cancel = self.name_input_callback)
 
     def name_input_callback(self, package_name = None):
         if not package_name:
@@ -32,7 +35,7 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
         PackageSkeleton(package_name).compose(self.skeleton_path, self.packages_path)
 
     def get_skeleton_path(self):
-        return self.get_path_from_settings("base_package_structure_path", "skeleton")
+        return self.get_path_from_settings("base_package_structure_path", BasePath.join("skeleton"))
 
     def get_packages_path(self):
         return self.get_path_from_settings("packages_path", sublime.packages_path())
@@ -78,6 +81,13 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
         sublime.set_timeout(lambda: sublime.active_window().show_quick_panel(items, on_done, sublime.MONOSPACE_FONT, selected_index, on_highlighted), 0)
 
 # Custom Classes
+
+class BasePath():
+    base = os.path.join(sublime.packages_path(), "PackageBoilerplate")
+
+    @classmethod
+    def join(cls, path):
+        return os.path.join(cls.base, path)
 
 class PackageSkeleton():
     def __init__(self, package_name, skip = []):
