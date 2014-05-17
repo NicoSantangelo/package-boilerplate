@@ -2,5 +2,9 @@
     {
       "caption": "Package Boilerplate: New package",
       "command": "package_boilerplate"
+    },
+    {
+      "caption": "Package Boilerplate: Add support",
+      "command": "package_boilerplate_support"
     }
 ]

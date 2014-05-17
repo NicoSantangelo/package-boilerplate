@@ -14,6 +14,8 @@ for test_file in glob.glob("tests/test_*.py"):
     if key in sys.modules:
         reload(sys.modules[key])
 
+# Commands
+
 class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
     def run(self):
         self.settings = sublime.load_settings("PackageBoilerplate.sublime-settings")
@@ -44,6 +46,38 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
 
     def show_input_panel(self, caption, on_done = None, on_change = None, on_cancel = None):
         sublime.active_window().show_input_panel(caption, "", on_done, on_change, on_cancel)
+
+class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        # Ask for a PackageName
+        # Show the user the available options
+        # Use packages_path + PackageName and add the support files there
+        self.options = [
+            { 'name': "BaseCommand: A base class for sublime commands", 'action': self.add_base_command },
+            { 'name': "ProgressNotifier: Add a progress bar a la 'Package Control'", 'action': self.add_progress_notifier },
+            { 'name': "Exit", 'action': lambda : None }
+        ]
+        self.settings = sublime.load_settings("PackageBoilerplate.sublime-settings")
+        self.show_quick_panel(self.items(), self.callback)
+
+    def items(self):
+        return [option['name'] for option in self.options]
+
+    def callback(self, index):
+        option = self.options[index]
+        if not option is None:
+            option['action']()
+
+    def add_base_command(self):
+        pass
+
+    def add_progress_notifier(self):
+        pass
+
+    def show_quick_panel(self, items, on_done = None, on_highlighted = None, selected_index = -1):
+        sublime.set_timeout(lambda: sublime.active_window().show_quick_panel(items, on_done, sublime.MONOSPACE_FONT, selected_index, on_highlighted), 0)
+
+# Custom Classes
 
 class PackageSkeleton():
     def __init__(self, package_name, skip = []):
