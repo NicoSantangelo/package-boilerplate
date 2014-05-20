@@ -56,8 +56,8 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
         # Show the user the available options
         # Use packages_path + PackageName and add the support files there
         self.options = [
-            { 'name': "BaseCommand: A base class for sublime commands", 'action': self.add_base_command },
-            { 'name': "ProgressNotifier: Add a progress bar a la 'Package Control'", 'action': self.add_progress_notifier },
+            { 'name': "BaseCommand: A base class for sublime commands", 'action': lambda: self.ask_package_name(self.add_base_command) },
+            { 'name': "ProgressNotifier: Add a progress bar a la 'Package Control'", 'action': lambda: self.ask_package_name(self.add_progress_notifier) },
             { 'name': "What's this?", 'action': self.explain },
             { 'name': "Exit", 'action': lambda : None }
         ]
@@ -72,17 +72,20 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
         if not option is None:
             option['action']()
 
-    def add_base_command(self):
-        pass
+    def add_base_command(self, package_name = None):
+        print(package_name)
 
-    def add_progress_notifier(self):
-        pass
-
+    def add_progress_notifier(self, package_name = None):
+        print(package_name)
+    
     def explain(self):
         self.window.open_file(BasePath.join("support/Explanation.txt"))
 
     def show_quick_panel(self, items, on_done = None, on_highlighted = None, selected_index = -1):
         sublime.set_timeout(lambda: sublime.active_window().show_quick_panel(items, on_done, sublime.MONOSPACE_FONT, selected_index, on_highlighted), 0)
+
+    def ask_package_name(self, callback):
+        sublime.active_window().show_input_panel("Pacakge name", "", callback, None, callback)
 
 # Custom Classes
 
