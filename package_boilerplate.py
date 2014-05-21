@@ -71,12 +71,12 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
     def _copy_support_file(self, package_name, file_name):
         if not package_name:
             return
-        support_file_path = BasePath.join("support/" + file_name)
+        support_file_path = BasePath.join("support", file_name)
         package_path = os.path.join(self.packages_path, package_name, file_name)
         PackageSkeleton(package_name).copy_file(support_file_path, package_path)
 
     def explain(self):
-        self.window.open_file(BasePath.join("support/Explanation.txt"))
+        self.window.open_file(BasePath.join("support", "Explanation.txt"))
 
     def show_quick_panel(self, items, on_done = None, on_highlighted = None, selected_index = -1):
         sublime.set_timeout(lambda: sublime.active_window().show_quick_panel(items, on_done, sublime.MONOSPACE_FONT, selected_index, on_highlighted), 0)
