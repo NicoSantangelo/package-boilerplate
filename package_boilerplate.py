@@ -90,8 +90,8 @@ class BasePath():
     base = os.path.join(sublime.packages_path(), "PackageBoilerplate")
 
     @classmethod
-    def join(cls, path):
-        return os.path.join(cls.base, path)
+    def join(cls, *paths):
+        return os.path.join(cls.base, *paths)
 
 class Path():
     def __init__(self, settings):

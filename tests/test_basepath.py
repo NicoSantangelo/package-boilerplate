@@ -11,3 +11,7 @@ class Test_BasePath(unittest.TestCase):
     def test_join_combines_the_packages_path_with_the_supplied_one(self):
         result = package_boilerplate.BasePath.join("some/new/path")
         self.assertEquals(result, sublime.packages_path() + "/PackageBoilerplate/some/new/path")
+
+    def test_join_combines_the_packages_path_with_all_the_supplied_arguments(self):
+        result = package_boilerplate.BasePath.join("some", "new", "path")
+        self.assertEquals(result, sublime.packages_path() + "/PackageBoilerplate/some/new/path")
