@@ -3,6 +3,7 @@ try:
     register_tests({
         "skeleton": ["PackageBoilerplate.tests.test_skeleton"],
         "support": ["PackageBoilerplate.tests.test_support"],
+        "path": ["PackageBoilerplate.tests.test_path"],
         "basepath": ["PackageBoilerplate.tests.test_basepath"]
     })
 except ImportError:

@@ -24,37 +24,26 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
 
     # Cache the paths so we can throw an error (if there is any) before asking for the package name
     def cache_paths(self):
-        self.skeleton_path = self.get_skeleton_path()
-        self.packages_path = self.get_packages_path()
+        path = Path(self.settings)
+        self.skeleton_path = path.get("base_package_structure_path", BasePath.join("skeleton"))
+        self.packages_path = path.get("packages_path", sublime.packages_path())
 
     def name_input_callback(self, package_name = None):
         if not package_name:
-            sublime.active_window().active_view().set_status("PackageBoilerplate", "Please supply a name for your package!") 
+            self.set_status("Please supply a name for your package!")
             return
 
         PackageSkeleton(package_name).compose(self.skeleton_path, self.packages_path)
 
-    def get_skeleton_path(self):
-        return self.get_path_from_settings("base_package_structure_path", BasePath.join("skeleton"))
-
-    def get_packages_path(self):
-        return self.get_path_from_settings("packages_path", sublime.packages_path())
-
-    def get_path_from_settings(self, settings_key, fallback):
-        path = self.settings.get(settings_key, False) or fallback
-        if not os.path.exists(path):
-            sublime.error_message("PackageBoilerplate\nTried to use the path " + path + " to create the files, but it wasn't found.\nCheck your settings or create an issue on this package repository")
-            raise FileNotFoundError(path)
-        return path
-
     def show_input_panel(self, caption, on_done = None, on_change = None, on_cancel = None):
         sublime.active_window().show_input_panel(caption, "", on_done, on_change, on_cancel)
 
+    def set_status(self, text):
+        sublime.active_window().active_view().set_status("PackageBoilerplate", text) 
+
+
 class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
     def run(self):
-        # Ask for a PackageName
-        # Show the user the available options
-        # Use packages_path + PackageName and add the support files there
         self.options = [
             { 'name': "BaseCommand: A base class for sublime commands", 'action': lambda: self.ask_package_name(self.add_base_command) },
             { 'name': "ProgressNotifier: Add a progress bar a la 'Package Control'", 'action': lambda: self.ask_package_name(self.add_progress_notifier) },
@@ -62,6 +51,7 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
             { 'name': "Exit", 'action': lambda : None }
         ]
         self.settings = sublime.load_settings("PackageBoilerplate.sublime-settings")
+        self.packages_path = Path(self.settings).get("packages_path", sublime.packages_path())
         self.show_quick_panel(self.items(), self.callback)
 
     def items(self):
@@ -73,11 +63,18 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
             option['action']()
 
     def add_base_command(self, package_name = None):
-        print(package_name)
+        self._copy_support_file(package_name, "base_command.py")
 
     def add_progress_notifier(self, package_name = None):
-        print(package_name)
-    
+        self._copy_support_file(package_name, "progress_notifier.py")
+
+    def _copy_support_file(self, package_name, file_name):
+        if not package_name:
+            return
+        support_file_path = BasePath.join("support/" + file_name)
+        package_path = os.path.join(self.packages_path, package_name, file_name)
+        PackageSkeleton(package_name).copy_file(support_file_path, package_path)
+
     def explain(self):
         self.window.open_file(BasePath.join("support/Explanation.txt"))
 
@@ -95,6 +92,17 @@ class BasePath():
     @classmethod
     def join(cls, path):
         return os.path.join(cls.base, path)
+
+class Path():
+    def __init__(self, settings):
+        self.settings = settings
+
+    def get(self, settings_key, fallback = None):
+        path = self.settings.get(settings_key, False) or fallback
+        if not os.path.exists(path):
+            sublime.error_message("PackageBoilerplate\nTried to use the path " + path + " to create the files, but it wasn't found.\nCheck your settings or create an issue on this package repository")
+            raise FileNotFoundError(path)
+        return path
 
 class PackageSkeleton():
     def __init__(self, package_name, skip = []):
