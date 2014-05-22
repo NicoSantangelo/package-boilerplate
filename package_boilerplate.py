@@ -90,11 +90,17 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
     def explain(self):
         self.window.open_file(BasePath.join("support", "Explanation.txt"))
 
+    def ask_package_name(self, callback):
+        subl_path = sublime.packages_path()
+        package_names = [name for name in os.listdir(subl_path) if os.path.isdir(os.path.join(subl_path, name))]
+        def callback_wrap(index):
+            if index >= 0 and index < len(package_names):
+                callback(package_names[index])
+        self.show_quick_panel(package_names, callback_wrap)
+
     def show_quick_panel(self, items, on_done = None, on_highlighted = None, selected_index = -1):
         sublime.set_timeout(lambda: sublime.active_window().show_quick_panel(items, on_done, sublime.MONOSPACE_FONT, selected_index, on_highlighted), 0)
 
-    def ask_package_name(self, callback):
-        sublime.active_window().show_input_panel("Pacakge name", "", callback, None, callback)
 
 # Custom Classes
 
