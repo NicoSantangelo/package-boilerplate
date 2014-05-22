@@ -44,11 +44,17 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
 
 class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
     def run(self):
+        # TODO:
+        # 'all' option
+        # Package list instead of asking for the name
+        # Support for testing
+        # Remove imports from BaseCommand
         self.options = [
-            { 'name': "BaseCommand: A base class for sublime commands", 'action': lambda: self.ask_package_name(self.add_base_command) },
-            { 'name': "ProgressNotifier: Add a progress bar a la 'Package Control'", 'action': lambda: self.ask_package_name(self.add_progress_notifier) },
-            { 'name': "What's this?", 'action': self.explain },
-            { 'name': "Exit", 'action': lambda : None }
+            { 'name': "All: Add all support", 'action': self.add_all },
+            { 'name': "BaseCommand: A base class for sublime commands", 'action': self.add_base_command },
+            { 'name': "ProgressNotifier: Add a progress bar a la 'Package Control'", 'action': self.add_progress_notifier },
+            { 'name': "What's this?", 'action': self.explain, 'extra': True },
+            { 'name': "Exit", 'action': lambda : None, 'extra': True }
         ]
         self.settings = sublime.load_settings("PackageBoilerplate.sublime-settings")
         self.packages_path = Path(self.settings).get("packages_path", sublime.packages_path())
@@ -60,7 +66,13 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
     def callback(self, index):
         option = self.options[index]
         if not option is None:
-            option['action']()
+            if 'extra' in option and option['extra']:
+                option['action']()
+            else:
+                self.ask_package_name(option['action'])
+
+    def add_all(self, package_name = None):
+        pass
 
     def add_base_command(self, package_name = None):
         self._copy_support_file(package_name, "base_command.py")
