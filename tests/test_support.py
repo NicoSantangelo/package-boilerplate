@@ -14,3 +14,15 @@ class Test_PackageBoilerplateSupportCommand(unittest.TestCase):
     def test_items_returns_the_name_of_the_available_options(self):
         self.package_support.run()
         self.assertEquals(self.package_support.items(), ["All: Add all support", "BaseCommand: A base class for sublime commands", "ProgressNotifier: Add a progress bar a la 'Package Control'", "What's this?", "Exit"])
+
+    def test_support_actions_returns_all_the_non_extra_actions(self):
+        self.package_support.options = [
+            { 'name': "NotExtra", 'action': "NotExtraAction" },
+            { 'name': "Extra", 'action': "ExtraAction", 'extra': True }
+        ]
+        self.assertEquals(self.package_support.support_actions(), ["NotExtraAction"])
+
+    def test_is_extra_returns_True_if_extra_exists_in_the_dict_and_is_True(self):
+        self.assertTrue(self.package_support.is_extra({ 'extra': True }))
+        self.assertFalse(self.package_support.is_extra({ 'extra': False }))
+        self.assertFalse(self.package_support.is_extra({ 'something': True }))

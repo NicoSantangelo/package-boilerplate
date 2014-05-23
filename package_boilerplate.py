@@ -45,8 +45,6 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
 class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
     def run(self):
         # TODO:
-        # 'all' option
-        # Package list instead of asking for the name
         # Support for testing
         # Remove imports from BaseCommand
         self.options = [
@@ -63,16 +61,21 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
     def items(self):
         return [option['name'] for option in self.options]
 
+    def support_actions(self):
+        return [option['action'] for option in self.options if not self.is_extra(option)]
+
     def callback(self, index):
         option = self.options[index]
         if not option is None:
-            if 'extra' in option and option['extra']:
+            if self.is_extra(option):
                 option['action']()
             else:
                 self.ask_package_name(option['action'])
 
     def add_all(self, package_name = None):
-        pass
+        for action in self.support_actions():
+            if action != self.add_all:
+                action(package_name)
 
     def add_base_command(self, package_name = None):
         self._copy_support_file(package_name, "base_command.py")
@@ -97,6 +100,9 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
             if index >= 0 and index < len(package_names):
                 callback(package_names[index])
         self.show_quick_panel(package_names, callback_wrap)
+
+    def is_extra(self, some_object):
+        return 'extra' in some_object and some_object['extra']
 
     def show_quick_panel(self, items, on_done = None, on_highlighted = None, selected_index = -1):
         sublime.set_timeout(lambda: sublime.active_window().show_quick_panel(items, on_done, sublime.MONOSPACE_FONT, selected_index, on_highlighted), 0)
