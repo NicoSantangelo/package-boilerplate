@@ -2,11 +2,6 @@ import sublime, sublime_plugin
 
 is_sublime_text_3 = int(sublime.version()) >= 3000
 
-if is_sublime_text_3:
-    from .progress_notifier import ProgressNotifier
-else:
-    from progress_notifier import ProgressNotifier
-
 class BaseCommand(sublime_plugin.TextCommand):
     package_name = "{package_name}"
 
@@ -63,14 +58,15 @@ class BaseCommand(sublime_plugin.TextCommand):
         
     def async(self, fn, delay):
         if is_sublime_text_3:
-            progress = ProgressNotifier(self.package_name + ': Working')
-            sublime.set_timeout_async(lambda: self.call(fn, progress), delay)
+            # You can add support/progress_notifier and use it here to show a progress bar
+            sublime.set_timeout_async(lambda: self.call(fn), delay)
         else:
             fn()
 
-    def call(self, fn, progress):
+    def call(self, fn, progress = None):
         fn()
-        progress.stop()
+        if progress:
+            progress.stop()
 
 class ViewInsertCommand(sublime_plugin.TextCommand):
     def run(self, edit, size, content):
