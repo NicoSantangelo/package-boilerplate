@@ -62,7 +62,7 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
         return [option['name'] for option in self.options]
 
     def support_actions(self):
-        return [option['action'] for option in self.options if not self.is_extra(option)]
+        return [option['action'] for option in self.options if not self.is_extra(option) and option['action'] != self.add_all]
 
     def callback(self, index):
         option = self.options[index]
@@ -74,8 +74,7 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
 
     def add_all(self, package_name = None):
         for action in self.support_actions():
-            if action != self.add_all:
-                action(package_name)
+            action(package_name)
 
     def add_base_command(self, package_name = None):
         self._copy_support_file(package_name, "base_command.py")

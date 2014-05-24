@@ -22,6 +22,13 @@ class Test_PackageBoilerplateSupportCommand(unittest.TestCase):
         ]
         self.assertEquals(self.package_support.support_actions(), ["NotExtraAction"])
 
+    def test_support_actions_skips_the_add_all_method(self):
+        self.package_support.options = [
+            { 'name': "NotExtra", 'action': "NotExtraAction" },
+            { 'name': "Add all", 'action': self.package_support.add_all },
+        ]
+        self.assertEquals(self.package_support.support_actions(), ["NotExtraAction"])
+
     def test_is_extra_returns_True_if_extra_exists_in_the_dict_and_is_True(self):
         self.assertTrue(self.package_support.is_extra({ 'extra': True }))
         self.assertFalse(self.package_support.is_extra({ 'extra': False }))
