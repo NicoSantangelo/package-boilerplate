@@ -44,13 +44,11 @@ class PackageBoilerplateCommand(sublime_plugin.WindowCommand):
 
 class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
     def run(self):
-        # TODO:
-        # Support for testing
-        # Remove imports from BaseCommand
         self.options = [
             { 'name': "All: Add all support", 'action': self.add_all },
             { 'name': "BaseCommand: A base class for sublime commands", 'action': self.add_base_command },
             { 'name': "ProgressNotifier: Add a progress bar a la 'Package Control'", 'action': self.add_progress_notifier },
+            { 'name': "Tests: Add test structure (using the AAAPT package)", 'action': self.add_tests },
             { 'name': "What's this?", 'action': self.explain, 'extra': True },
             { 'name': "Exit", 'action': lambda : None, 'extra': True }
         ]
@@ -77,17 +75,22 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
             action(package_name)
 
     def add_base_command(self, package_name = None):
-        self._copy_support_file(package_name, "base_command.py")
+        self.copy_support_file(package_name, "base_command.py")
 
     def add_progress_notifier(self, package_name = None):
-        self._copy_support_file(package_name, "progress_notifier.py")
+        self.copy_support_file(package_name, "progress_notifier.py")
 
-    def _copy_support_file(self, package_name, file_name):
+    def add_tests(self, package_name = None):
+        self.copy_support_file(package_name, "tests", "test_harness.py")
+
+    def copy_support_file(self, package_name, *file_names):
         if not package_name:
             return
-        support_file_path = BasePath.join("support", file_name)
-        package_path = os.path.join(self.packages_path, package_name, file_name)
-        PackageSkeleton(package_name).copy_file(support_file_path, package_path)
+        package_skeleton = PackageSkeleton(package_name)
+        for file_name in file_names:
+            support_file_path = BasePath.join("support", file_name)
+            package_path = os.path.join(self.packages_path, package_name, file_name)
+            package_skeleton.copy_file(support_file_path, package_path)
 
     def explain(self):
         self.window.open_file(BasePath.join("support", "Explanation.txt"))
