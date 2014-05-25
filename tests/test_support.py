@@ -13,7 +13,13 @@ class Test_PackageBoilerplateSupportCommand(unittest.TestCase):
 
     def test_items_returns_the_name_of_the_available_options(self):
         self.package_support.run()
-        self.assertEquals(self.package_support.items(), ["All: Add all support", "BaseCommand: A base class for sublime commands", "ProgressNotifier: Add a progress bar a la 'Package Control'", "What's this?", "Exit"])
+        self.assertEquals(self.package_support.items(), ["All: Add all support",
+            "BaseCommand: A base class for sublime commands",
+            "ProgressNotifier: Add a progress bar a la 'Package Control'",
+            "Tests: Add test structure (using the AAAPT package)",
+            "What's this?",
+            "Exit"
+        ])
 
     def test_support_actions_returns_all_the_non_extra_actions(self):
         self.package_support.options = [
