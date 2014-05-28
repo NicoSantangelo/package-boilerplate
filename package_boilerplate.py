@@ -151,7 +151,7 @@ class PackageSkeleton():
 
     def copy_file(self, source, destination):
         if os.path.isfile(source):
-            shutil.copy(source, destination)
+            shutil.copyfile(source, destination)
             self.replace_contents(destination)
         else:
             self.ensure_directory(destination)
