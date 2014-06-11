@@ -113,11 +113,17 @@ class PackageBoilerplateSupportCommand(sublime_plugin.WindowCommand):
 # Custom Classes
 
 class BasePath():
-    base = os.path.join(sublime.packages_path(), "PackageBoilerplate")
-
+    base = None
+    
     @classmethod
     def join(cls, *paths):
-        return os.path.join(cls.base, *paths)
+        return os.path.join(cls.path(), *paths)
+
+    @classmethod
+    def path(cls):
+        if not cls.base:
+            cls.base = os.path.join(sublime.packages_path(), "PackageBoilerplate")
+        return cls.base
 
 class Path():
     def __init__(self, settings):
