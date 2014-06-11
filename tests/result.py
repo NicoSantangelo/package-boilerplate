@@ -1,3 +1,4 @@
+# super_package_command.py
 import sublime, sublime_plugin
 
 is_sublime_text_3 = int(sublime.version()) >= 3000

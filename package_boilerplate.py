@@ -150,7 +150,7 @@ class PackageSkeleton():
     def copy_files(self, source, destination):
         for file_path in os.listdir(source):
             skeleton_file = os.path.join(source, file_path)
-            new_file_name = self.replace_file_name(file_path)
+            new_file_name = self.replace_package_name(file_path)
             if not self.should_skip(new_file_name):
                 new_destination = os.path.join(destination, new_file_name)
                 self.copy_file(skeleton_file, new_destination)
@@ -169,13 +169,14 @@ class PackageSkeleton():
                 return True
         return False
 
-    def replace_file_name(self, file_name):
-        return file_name.replace("PackageName", self.package_name).replace("package_name", self.underscore_package_name)
-
     def replace_contents(self, file_path):
         with codecs.open(file_path, 'r+', "utf-8") as opened_file:
-            new_content = opened_file.read().replace("{package_name}", self.package_name)
+            new_content = self.replace_package_name(opened_file.read(), with_curly_braces = True)
             self.write_text(opened_file, new_content)
+
+    def replace_package_name(self, text, with_curly_braces = False):
+        keys = ("{PackageName}", "{package_name}") if with_curly_braces else ("PackageName", "package_name")
+        return text.replace(keys[0], self.package_name).replace(keys[1], self.underscore_package_name)
 
     def write_text(self, file_to_write, text):
         file_to_write.seek(0)
