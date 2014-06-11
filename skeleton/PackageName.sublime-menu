@@ -12,18 +12,18 @@
                 "children":
                 [
                     {
-                        "caption": "{package_name}",
+                        "caption": "{PackageName}",
                         "children":
                         [
                             // Settings
                             {
                                 "command": "open_file",
-                                "args": {"file": "${packages}/{package_name}/{package_name}.sublime-settings"},
+                                "args": {"file": "${packages}/{PackageName}/{PackageName}.sublime-settings"},
                                 "caption": "Settings – Default"
                             },
                             {
                                 "command": "open_file",
-                                "args": {"file": "${packages}/User/{package_name}.sublime-settings"},
+                                "args": {"file": "${packages}/User/{PackageName}.sublime-settings"},
                                 "caption": "Settings – User"
                             },
                             { "caption": "-" },
@@ -32,7 +32,7 @@
                                 "caption": "Key Bindings – Default",
                                 "command": "open_file",
                                 "args": {
-                                    "file": "${packages}/{package_name}/Default (OSX).sublime-keymap",
+                                    "file": "${packages}/{PackageName}/Default (OSX).sublime-keymap",
                                     "platform": "OSX"
                                 }
                             },
@@ -40,7 +40,7 @@
                                 "caption": "Key Bindings – Default",
                                 "command": "open_file",
                                 "args": {
-                                    "file": "${packages}/{package_name}/Default (Linux).sublime-keymap",
+                                    "file": "${packages}/{PackageName}/Default (Linux).sublime-keymap",
                                     "platform": "Linux"
                                 }
                             },
@@ -48,7 +48,7 @@
                                 "caption": "Key Bindings – Default",
                                 "command": "open_file",
                                 "args": {
-                                    "file": "${packages}/{package_name}/Default (Windows).sublime-keymap",
+                                    "file": "${packages}/{PackageName}/Default (Windows).sublime-keymap",
                                     "platform": "Windows"
                                 }
                             },

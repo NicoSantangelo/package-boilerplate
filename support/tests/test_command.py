@@ -1,8 +1,9 @@
 import unittest
 
+from {PackageName} import {package_name}
+
 # Remember: 
-#   Import your package here
 #   Install AAAPT package to run the tests
 
-class Test_{package_name}Command(unittest.TestCase):
+class Test_{PackageName}Command(unittest.TestCase):
     pass

@@ -6,6 +6,6 @@ import sublime, sublime_plugin
 # sublime_plugin.EventListener
 # sublime_plugin.ApplicationCommand
 
-class {package_name}Command(sublime_plugin.TextCommand):
+class {PackageName}Command(sublime_plugin.TextCommand):
     def run(self, edit = None):
         pass

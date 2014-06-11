@@ -3,7 +3,7 @@ import sublime, sublime_plugin
 is_sublime_text_3 = int(sublime.version()) >= 3000
 
 class BaseCommand(sublime_plugin.TextCommand):
-    package_name = "{package_name}"
+    package_name = "{PackageName}"
 
     def run(self, edit = None):
         self.setup_data_from_settings()
