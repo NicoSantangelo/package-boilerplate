@@ -2,6 +2,6 @@
     // Customize the location of the directory where the package files will be created
     "packages_path": "",
 
-    // Customize the path to the skeleton to be used to generate the package files
+    // Customize the path of the skeleton to be used to generate the package files
     "base_package_structure_path": ""
 }
